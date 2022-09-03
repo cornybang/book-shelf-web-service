@@ -102,9 +102,11 @@ const getAllBooksHandler = (request, h) => {
   const response = h.response({
     status: 'success',
     data: {   
-      id: id,
-      name: name,
-      publisher: publisher,
+      books: filterBuku.map((book) => ({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher,
+      })),
     },
   });
   response.code(200);
@@ -186,7 +188,7 @@ const editBookByIdHandler = (request, h) => {
       finished, 
       updatedAt
     };
-    
+
     const response = h.response({
       status: 'success',
       message: 'Buku berhasil diperbarui',
@@ -202,7 +204,6 @@ const editBookByIdHandler = (request, h) => {
   response.code(404);
   return response;
 }
-
 
 const deleteBookByIdHandler = (request, h) => {
   const { id } = request.params;
