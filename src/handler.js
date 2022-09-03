@@ -88,8 +88,16 @@ const getAllBooksHandler = (request, h) => {
 
     if (name !== "undefined") {
       filterBuku = filterBuku.filter((book) => book.name.toLowerCase().includes(name.toLowerCase());
-
     }
+
+    if (reading !== "undefined") {
+      filterBuku = filterBuku.filter((book) => book.reading === !!Number(reading));
+    }
+
+    if (finished !== "undefined") {
+      filterBuku = filterBuku.filter((book) => book.finished === !!Number(finished));
+    }
+
     
     const response = h.response({
       status: 'success',
