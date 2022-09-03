@@ -9,7 +9,7 @@ const {
   const routes = [
     {
       method: 'POST',
-      path: '/notes',
+      path: '/books',
       handler: addBookHandler,
       options: {
         cors: {
