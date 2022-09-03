@@ -84,24 +84,24 @@ const addBookHandler = (request, h) => {
 const getAllBooksHandler = (request, h) => {
   const { id, name, publisher, reading, finished} = request.params;
 
-  let filterBuku = books; 
+  let filterBuku = books;
 
-  if (name !== "undefined") {
-    filterBuku = filterBuku.filter((book) => book.name.toLowerCase().includes(name.toLowerCase()));
+  if (name !== undefined) {
+    filterBuku = filterBuku.filter((book) => book
+      .name.toLowerCase().includes(name.toLowerCase()));
   }
 
-  if (reading !== "undefined") {
+  if (reading !== undefined) {
     filterBuku = filterBuku.filter((book) => book.reading === !!Number(reading));
   }
 
-  if (finished !== "undefined") {
+  if (finished !== undefined) {
     filterBuku = filterBuku.filter((book) => book.finished === !!Number(finished));
   }
 
-    
   const response = h.response({
     status: 'success',
-    data: {   
+    data: {
       books: filterBuku.map((book) => ({
         id: book.id,
         name: book.name,
@@ -109,6 +109,7 @@ const getAllBooksHandler = (request, h) => {
       })),
     },
   });
+
   response.code(200);
   return response;
 }
