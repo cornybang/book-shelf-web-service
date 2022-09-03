@@ -82,29 +82,25 @@ const addBookHandler = (request, h) => {
 
 
 const getAllBooksHandler = (request, h) => {
-    const { id, name, publisher} = request.params;
+    const { id, name, publisher, reading, finished} = request.params;
 
-    if (name !== undefined) {
-        const response = h.response({
-            status: 'success',
-            data: {   
-              id: id,
-              name: name,
-              publisher: publisher,
-            },
-          });
-          response.code(200);
-          return response;
-    } else {
-        const response = h.response({
-            status: 'success',
-            data: {   
-              books: []
-            },
-          });
-          response.code(200);
-          return response;
+    let filterBuku = books; 
+
+    if (name !== "undefined") {
+      filterBuku = filterBuku.filter((book) => book.name.toLowerCase().includes(name.toLowerCase());
+
     }
+    
+    const response = h.response({
+      status: 'success',
+      data: {   
+        id: id,
+        name: name,
+        publisher: publisher,
+      },
+    });
+    response.code(200);
+    return response;
 }
 
 const getBookByIdHandler = (request, h) => {
