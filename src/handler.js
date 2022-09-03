@@ -50,7 +50,7 @@ const addBookHandler = (request, h) => {
     readPage,
     finished,
     reading,
-    insertedAt,
+    createdAt,
     updatedAt      
   };
         
@@ -82,20 +82,36 @@ const addBookHandler = (request, h) => {
 
 
 const getAllBooksHandler = (request, h) => {
-    const { id, name, publisher, reading, finished} = request.params;
+  const { id, name, publisher, reading, finished} = request.params;
 
-    let filterBuku = books; 
-        
-    const response = h.response({
-      status: 'success',
-      data: {   
-        id: id,
-        name: name,
-        publisher: publisher,
-      },
-    });
-    response.code(200);
-    return response;
+  let filterBuku = books;
+
+  if (name !== undefined) {
+    filterBuku = filterBuku.filter((book) => book
+      .name.toLowerCase().includes(name.toLowerCase()));
+  }
+
+  if (reading !== undefined) {
+    filterBuku = filterBuku.filter((book) => book.reading === !!Number(reading));
+  }
+
+  if (finished !== undefined) {
+    filterBuku = filterBuku.filter((book) => book.finished === !!Number(finished));
+  }
+
+  const response = h.response({
+    status: 'success',
+    data: {
+      books: filterBuku.map((book) => ({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher,
+      })),
+    },
+  });
+
+  response.code(200);
+  return response;
 }
 
 const getBookByIdHandler = (request, h) => {
@@ -105,21 +121,22 @@ const getBookByIdHandler = (request, h) => {
 
   if (book !== undefined) {
     const response = h.response({
-        status: 'success',
-        data: {   
-            book
-        },
-      });
-      response.code(200);
-      return response;
+      status: 'success',
+      data: {   
+        book
+      },
+    });
+    response.code(200);
+    return response;
   } else {
     const response = h.response({
-        status: 'fail',
-        message: 'Buku tidak ditemukan',
-      });
-      response.code(404);
-      return response;
+      status: 'fail',
+      message: 'Buku tidak ditemukan',
+    });
+    response.code(404);
+    return response;
   }
+
 };
 
 const editBookByIdHandler = (request, h) => {
@@ -140,45 +157,46 @@ const editBookByIdHandler = (request, h) => {
   const index = books.findIndex((book) => book.id === id);
 
   if (index !== -1) {
-      if (name === "undefined") {
-        const response = h.response({
-          status: 'fail',
-          message: "Gagal memperbarui buku. Mohon isi nama buku"
-        });
-        response.code(400);
-        return response;
-      }
-
-      if (readPage > pageCount) {
-        const response = h.response({
-          status: 'fail',
-          message: "Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount"
-        });
-        response.code(400);
-        return response;
-      }
-
-      const finished = (pageCount === readPage);
-      books[index] = {
-        ...books[index],
-        name,
-        year,
-        author,
-        summary,
-        publisher,
-        pageCount,
-        readPage,
-        reading,
-        finished, 
-        updatedAt
-      };
+    if (name === "undefined") {
       const response = h.response({
-        status: 'success',
-        message: 'Buku berhasil diperbarui',
+        status: 'fail',
+        message: "Gagal memperbarui buku. Mohon isi nama buku"
       });
-      response.code(200);
+      response.code(400);
       return response;
     }
+
+    if (readPage > pageCount) {
+      const response = h.response({
+        status: 'fail',
+        message: "Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount"
+      });
+      response.code(400);
+      return response;
+    }
+
+    const finished = (pageCount === readPage);
+    books[index] = {
+      ...books[index],
+      name,
+      year,
+      author,
+      summary,
+      publisher,
+      pageCount,
+      readPage,
+      reading,
+      finished, 
+      updatedAt
+    };
+
+    const response = h.response({
+      status: 'success',
+      message: 'Buku berhasil diperbarui',
+    });
+    response.code(200);
+    return response;
+  }
 
   const response = h.response({
     status: 'fail',
@@ -187,7 +205,6 @@ const editBookByIdHandler = (request, h) => {
   response.code(404);
   return response;
 }
-
 
 const deleteBookByIdHandler = (request, h) => {
   const { id } = request.params;
